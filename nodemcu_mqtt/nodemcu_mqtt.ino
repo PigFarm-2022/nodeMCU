@@ -1,7 +1,6 @@
 #include <ESP8266WiFi.h> 
 #include <PubSubClient.h>                                              
 #include <SoftwareSerial.h>
-//hahaha
 
 #define WIFI_SSID "Bahay Kubo - 2.4GHz"                                          
 #define WIFI_PASSWORD "Isuzutrooper_grv208" 
