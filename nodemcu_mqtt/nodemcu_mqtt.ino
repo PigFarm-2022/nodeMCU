@@ -2,11 +2,12 @@
 #include <PubSubClient.h>                                              
 #include <SoftwareSerial.h>
 
-#define WIFI_SSID "Bahay Kubo - 2.4GHz"                                          
+#define WIFI_SSID "DE LA VICTORIA NETWORK-2.4GHZ"                                          
 #define WIFI_PASSWORD "Isuzutrooper_grv208" 
 
 SoftwareSerial mySerial (D6, D5); //RX, TX pins
-SoftwareSerial mySerial2 (D4, D3); //RX, TX pins
+SoftwareSerial mySerial2 (D8, D7); //RX, TX pins
+//SoftwareSerial mySerial2 (D4, D3); //RX, TX pins
 // Initializes the espClient. You should change the espClient name if you have multiple ESPs running in your home automation system
 WiFiClient espClient;
 PubSubClient espclient(espClient);
@@ -99,6 +100,22 @@ void callback(String topic, byte* message, unsigned int length) {
     messageInfo += (char)message[i];
   }
  //Serial.println();
+
+  // CAGE 1 refresh
+  if (topic=="cage_1/refresh") {
+  Serial.print("------");
+    if (messageInfo == "ON") {
+      mySerial.write('s');
+      Serial.print("refresh1");
+    }
+  }
+
+  if (topic=="cage_2/refresh") {
+    if (messageInfo == "ON") {
+      mySerial.write('r');
+      Serial.print("refresh2");
+    }
+  }
 
   // CAGE 1 Feed
   if(topic=="cage_1/feed_1"){
@@ -249,6 +266,9 @@ void reconnect() {
       espclient.subscribe("cage2_wash_sched/0");
       espclient.subscribe("cage2_wash_sched/1");
       espclient.subscribe("cage2_wash_sched/2");
+
+      espclient.subscribe("cage_1/refresh");
+      espclient.subscribe("cage_2/refresh");
     } else {
       Serial.print("failed, rc=");
       Serial.print(espclient.state());
@@ -288,9 +308,7 @@ void loop()
 {
 
 /*  //RTC codes
-
  dt = clock1.getDateTime();
-
  timeStatus = clock1.dateFormat("g:i A", dt);*/
 
   //Serial.println(timeStatus);
@@ -322,7 +340,6 @@ void loop()
   mySerial.write('t'); 
   mySerial.write(feed2_2.c_str());
   mySerial.write("\n\r");
-
   mySerial.write('t'); 
   mySerial.write(wash1_0.c_str());
   mySerial.write("\n\r");
@@ -356,49 +373,48 @@ if (mySerial.read() == 't'){
       //timeRead.trim();
       //espclient.publish("feed_tank_1", String(ultrasonicIntY).c_str());
   }
-
   Serial.println();
       Serial.print("time: ");
       Serial.print(timeRead);
       Serial.println(timeRead.length());*/
-
-  if (mySerial.read() == 'z') {
-      ultrasonicReadZ = mySerial.readStringUntil('\r');
+  if (Serial.read() == 'z') {
+      ultrasonicReadZ = Serial.readStringUntil('\r');
       ultrasonicIntZ = ultrasonicReadZ.toInt();
-      //Serial.println();
-      //Serial.print("Feed Tank 2: ");
-      //Serial.print(ultrasonicIntZ);
+      Serial.println();
+      Serial.print("Feed Tank 2: ");
+      Serial.print(ultrasonicIntZ);
       espclient.publish("feed_tank_2", String(ultrasonicIntZ).c_str());
   }
 
-  if (mySerial.read() == 'x') {
-      ultrasonicRead = mySerial.readStringUntil('\r');
+if (mySerial.read() == 'y'){
+      ultrasonicReadY = mySerial.readStringUntil('\r');
+      ultrasonicIntY = ultrasonicReadY.toInt();
+      Serial.println();
+      Serial.print("Feed Tank 1: ");
+      Serial.print(ultrasonicIntY);
+      espclient.publish("feed_tank_1", String(ultrasonicIntY).c_str());
+  }
+
+  if (mySerial2.read() == 'x') {
+      ultrasonicRead = mySerial2.readStringUntil('\r');
       ultrasonicInt = ultrasonicRead.toInt();
-      //Serial.println();
-      //Serial.print("Water Tank : ");
-      //Serial.print(ultrasonicInt);
+      Serial.println();
+      Serial.print("Water Tank : ");
+      Serial.print(ultrasonicInt);
       espclient.publish("water_tank", String(ultrasonicInt).c_str());
   }
 
  //Ultrasonic Sensor Water Tank (Slave 1 PIC)
-  if (mySerial.read() == 'y'){
-      ultrasonicReadY = mySerial.readStringUntil('\r');
-      ultrasonicIntY = ultrasonicReadY.toInt();
-      //Serial.println();
-      //Serial.print("Feed Tank 1: ");
-      //Serial.print(ultrasonicIntY);
-      espclient.publish("feed_tank_1", String(ultrasonicIntY).c_str());
-  }
 
       /*Serial.print("Firebase time: ");
       Serial.print(feed1_0);
       Serial.println(feed1_0.length());*/
-
+/*
   if (timeRead == feed1_0) {
       //Serial.println();
       espclient.publish("cage_1/feed_1/OFF", "ON");
       //espclient.publish("cage_1/feed_1/OFF", "OFF");
-      }
+      }*/
 
  if (!espclient.connected()) {
     reconnect();
