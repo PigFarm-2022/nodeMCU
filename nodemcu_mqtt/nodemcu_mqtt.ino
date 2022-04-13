@@ -366,17 +366,17 @@ void loop()
       mySerial.write('o');
   }
 
-/*
-if (mySerial.read() == 't'){
-      timeRead = mySerial.readStringUntil('\n');
+
+if (mySerial2.read() == 't'){
+      timeRead = mySerial2.readStringUntil('\n');
       //timeInt = timeRead.toInt();
+      Serial.println();
+      Serial.print("time: ");
+      Serial.print(timeRead);
       //timeRead.trim();
       //espclient.publish("feed_tank_1", String(ultrasonicIntY).c_str());
   }
-  Serial.println();
-      Serial.print("time: ");
-      Serial.print(timeRead);
-      Serial.println(timeRead.length());*/
+
   if (Serial.read() == 'z') {
       ultrasonicReadZ = Serial.readStringUntil('\r');
       ultrasonicIntZ = ultrasonicReadZ.toInt();
@@ -402,6 +402,11 @@ if (mySerial.read() == 'y'){
       Serial.print("Water Tank : ");
       Serial.print(ultrasonicInt);
       espclient.publish("water_tank", String(ultrasonicInt).c_str());
+  }
+
+  if (timeRead == feed1_0) {
+    Serial.println("Goods!");
+    feed_1_on_0p5kg ();
   }
 
  //Ultrasonic Sensor Water Tank (Slave 1 PIC)
