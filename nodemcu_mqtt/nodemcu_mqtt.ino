@@ -43,6 +43,9 @@ int timeInt;
 String feed1_0, feed1_1, feed1_2, feed2_0, feed2_1, feed2_2;
 String wash1_0, wash1_1, wash1_2, wash2_0, wash2_1, wash2_2;
 
+String timeTest = "7:30 PM";
+
+bool x = false;
 
 // feed 1 voids
 void feed_1_on_0p5kg () {
@@ -307,59 +310,6 @@ void setup()
 void loop() 
 {
 
-/*  //RTC codes
- dt = clock1.getDateTime();
- timeStatus = clock1.dateFormat("g:i A", dt);*/
-
-  //Serial.println(timeStatus);
-
-  //Ultrasonic Sensor Water Tank (Master PIC)
-
-  /*if(millis() >= time_now + 100){
-    //time_now += 100;
-    mySerial.write(' ');
-  }*/
-/*
-  if(millis() >= delay_sched + 500){
-      delay_sched += 500;
-  mySerial.write('t');    
-  mySerial.write(feed1_0.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(feed1_1.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(feed1_2.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(feed2_0.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(feed2_1.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(feed2_2.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(wash1_0.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(wash1_1.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(wash1_2.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(wash2_0.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(wash2_1.c_str());
-  mySerial.write("\n\r");
-  mySerial.write('t'); 
-  mySerial.write(wash2_2.c_str());
-  mySerial.write("\n\r");
-  }*/
-
   if(millis() >= delay_sched + 500){
       delay_sched += 500;
 
@@ -404,9 +354,11 @@ if (mySerial.read() == 'y'){
       espclient.publish("water_tank", String(ultrasonicInt).c_str());
   }
 
+
   if (timeRead == feed1_0) {
     Serial.println("Goods!");
-    feed_1_on_0p5kg ();
+    espclient.publish("cage_1/feed_1/OFF", "ON");
+    feed1_0 = " ";
   }
 
  //Ultrasonic Sensor Water Tank (Slave 1 PIC)
