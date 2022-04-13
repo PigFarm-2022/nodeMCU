@@ -40,54 +40,59 @@ int timeResult;
 String timeRead;
 int timeInt;
 
-String feed1_0, feed1_1, feed1_2, feed2_0, feed2_1, feed2_2;
+String feed1_0, feed1_1, feed1_2, feed2_0, feed2_1, feed2_2, feed1;
 String wash1_0, wash1_1, wash1_2, wash2_0, wash2_1, wash2_2;
+
+String manual_feed_0p5KG, manual_feed_1KG, manual_feed_1p5KG;
+String scheduled_feed_0p5KG, scheduled_feed_1KG, scheduled_feed_1p5KG;
 
 String timeTest = "7:30 PM";
 
 bool x = false;
 
+String check;
+
 // feed 1 voids
 void feed_1_on_0p5kg () {
   mySerial.write('a'); // Write integer 111 to PIC
-  espclient.publish("cage_1/feed_1/OFF", "OFF");
+  espclient.publish("cage_1/feed_1/switch", "OFF");
 }
 
 void feed_1_on_1kg () {
   mySerial.write('b'); // Write integer 112 to PIC
-  espclient.publish("cage_1/feed_1/OFF", "OFF");
+  espclient.publish("cage_1/feed_1/switch", "OFF");
 }
 
 void feed_1_on_1p5kg () {
   mySerial.write('c'); // Write integer 113 to PIC
-  espclient.publish("cage_1/feed_1/OFF", "OFF");
+  espclient.publish("cage_1/feed_1/switch", "OFF");
 }
 
 //feed 2 voids
 
 void feed_2_on_0p5kg () {
   mySerial.write('d'); // Write integer 211 to PIC
-  espclient.publish("cage_2/feed_2/OFF", "OFF");
+  espclient.publish("cage_2/feed_2/switch", "OFF");
 }
 
 void feed_2_on_1kg () {
   mySerial.write('e'); // Write integer 212 to PIC
-  espclient.publish("cage_2/feed_2/OFF", "OFF");
+  espclient.publish("cage_2/feed_2/switch", "OFF");
 }
 
 void feed_2_on_1p5kg () {
   mySerial.write('f'); // Write integer 213 to PIC
-  espclient.publish("cage_2/feed_2/OFF", "OFF");
+  espclient.publish("cage_2/feed_2/switch", "OFF");
 }
 
 void wash_1 () {
   mySerial.write('g');
-  espclient.publish("wash1_off", "OFF");
+  espclient.publish("cage_1/wash_1/switch", "OFF");
 }
 
 void wash_2 () {
   mySerial.write('h');
-  espclient.publish("wash2_off", "OFF");
+  espclient.publish("cage_2/wash_2/switch", "OFF");
 }
 
 // This functions is executed when some device publishes a message to a topic that your NodeMCU is subscribed to
@@ -123,16 +128,40 @@ void callback(String topic, byte* message, unsigned int length) {
   // CAGE 1 Feed
   if(topic=="cage_1/feed_1"){
     if((messageInfo == "ON 0.5 KG") || (messageInfo == "0.5 KG ON")){
+      manual_feed_0p5KG = messageInfo;
       feed_1_on_0p5kg ();
-      Serial.println("0.5 KG");
+      Serial.println("Manual feed 0.5 KG");
+      espclient.publish("cage_1/logs", "Manual feed 0.5KG at ", timeRead.c_str());
       }
+    else if((messageInfo == "ON1 0.5 KG") || (messageInfo == "0.5 KG ON1")){
+      scheduled_feed_0p5KG = messageInfo;
+      feed_1_on_0p5kg ();
+      Serial.println("Scheduled feed 0.5 KG");
+      espclient.publish("cage_1/logs", "Scheduled feed 0.5KG at ", timeRead.c_str());
+      }   
     else if((messageInfo == "ON 1 KG") || (messageInfo == "1 KG ON")){
+      manual_feed_1KG = messageInfo;
       feed_1_on_1kg ();
-      Serial.println("1 KG");
+      Serial.println("Manual feed 1 KG");
+      espclient.publish("cage_1/logs", "Manual feed 1KG at ", timeRead.c_str());
+    }
+    else if((messageInfo == "ON1 1 KG") || (messageInfo == "1 KG ON1")){
+      scheduled_feed_1KG = messageInfo;
+      feed_1_on_1kg ();
+      Serial.println("Scheduled feed 1 KG");
+      espclient.publish("cage_1/logs", "Scheduled feed 1KG at ", timeRead.c_str());
     }
     else if((messageInfo == "ON 1.5 KG") || (messageInfo == "1.5 KG ON")){
+      manual_feed_1p5KG = messageInfo;
       feed_1_on_1p5kg ();
-      Serial.println("1.5 KG");
+      Serial.println("Manual 1.5 KG");
+      espclient.publish("cage_1/logs", "Manual feed 1.5KG at ", timeRead.c_str());
+    }
+    else if((messageInfo == "ON1 1.5 KG") || (messageInfo == "1.5 KG ON1")){
+      scheduled_feed_1p5KG = messageInfo;
+      feed_1_on_1p5kg ();
+      Serial.println("Scheduled feed 1.5 KG");
+      espclient.publish("cage_1/logs", "Scheduled feed 1.5KG at ", timeRead.c_str());
     }
   }
 
@@ -155,14 +184,14 @@ void callback(String topic, byte* message, unsigned int length) {
 
   // CAGE 1 Wash
 
-  if (topic=="cage1_wash") {
+  if (topic=="cage_1/wash_1") {
     if (messageInfo == "ON") {
       wash_1();
       Serial.println("Wash 1");
     }
   }
 
-  if (topic=="cage2_wash") {
+  if (topic=="cage_2/wash_2") {
     if (messageInfo == "ON") {
       wash_2();
       Serial.println("Wash 2");
@@ -172,7 +201,7 @@ void callback(String topic, byte* message, unsigned int length) {
   //CAGE 1 sched
 
   if(topic=="cage1_feed_sched/0"){
-      feed1_0 = messageInfo;
+      feed1_0= messageInfo;
   }
 
   if(topic=="cage1_feed_sched/1"){
@@ -237,12 +266,14 @@ void reconnect() {
       // Subscribe or resubscribe to a topic
       // You can subscribe to more topics (to control more LEDs in this example)
       espclient.subscribe("cage_1/feed_1");
-      espclient.subscribe("cage_1/feed_1/OFF");
+      espclient.subscribe("cage_1/feed_1/switch");
       espclient.subscribe("cage_1/weight_1");
+      espclient.subscribe("cage_1/logs");
 
       espclient.subscribe("cage_2/feed_2");
-      espclient.subscribe("cage_2/feed_2/OFF");
+      espclient.subscribe("cage_2/feed_2/switch");
       espclient.subscribe("cage_2/weight_2");
+      espclient.subscribe("cage_2/logs");
 
       espclient.subscribe("water_tank");
       espclient.subscribe("feed_tank_1");
@@ -256,11 +287,11 @@ void reconnect() {
       espclient.subscribe("cage2_feed_sched/1");
       espclient.subscribe("cage2_feed_sched/2");
 
-      espclient.subscribe("cage1_wash");
-      espclient.subscribe("cage2_wash");
+      espclient.subscribe("cage_1/wash_1");
+      espclient.subscribe("cage_2/wash_2");
 
-      espclient.subscribe("wash1_off");
-      espclient.subscribe("wash2_off");
+      espclient.subscribe("cage_1/wash_1/switch");
+      espclient.subscribe("cage_2/wash_2/switch");
 
       espclient.subscribe("cage1_wash_sched/0");
       espclient.subscribe("cage1_wash_sched/1");
@@ -355,11 +386,39 @@ if (mySerial.read() == 'y'){
   }
 
 
-  if (timeRead == feed1_0) {
-    Serial.println("Goods!");
-    espclient.publish("cage_1/feed_1/OFF", "ON");
-    feed1_0 = " ";
+  if ((timeRead == feed1_0) || (timeRead == feed1_1) || (timeRead == feed1_2)) {
+    Serial.println("feed 1 scheduled successful!");
+    espclient.publish("cage_1/feed_1/switch", "ON1");
+    if (timeRead == feed1_0) {feed1_0 = " ";}
+    if (timeRead == feed1_1) {feed1_1 = " ";}
+    if (timeRead == feed1_2) {feed1_2 = " ";}
   }
+
+  if ((timeRead == feed2_0) || (timeRead == feed2_1) || (timeRead == feed2_2)) {
+    Serial.println("feed 2 scheduled successful!");
+    espclient.publish("cage_2/feed_2/switch", "ON1");
+    if (timeRead == feed2_0) {feed2_0 = " ";}
+    if (timeRead == feed2_1) {feed2_1 = " ";}
+    if (timeRead == feed2_2) {feed2_2 = " ";}
+  }
+
+  if ((timeRead == wash1_0) || (timeRead == wash1_1) || (timeRead == wash1_2)) {
+    Serial.println("wash 1 scheduled successful!");
+    espclient.publish("cage_1/wash_1/switch", "ON");
+    if (timeRead == wash1_0) {wash1_0 = " ";}
+    if (timeRead == wash1_1) {wash1_1 = " ";}
+    if (timeRead == wash1_2) {wash1_2 = " ";}
+  }
+
+  if ((timeRead == wash2_0) || (timeRead == wash2_1) || (timeRead == wash2_2)) {
+    Serial.println("wash 2 scheduled successful!");
+    espclient.publish("cage_2/wash_2/switch", "ON");
+    if (timeRead == wash2_0) {wash2_0 = " ";}
+    if (timeRead == wash2_1) {wash2_1 = " ";}
+    if (timeRead == wash2_2) {wash2_2 = " ";}
+  }
+
+  //Serial.println(feed1);
 
  //Ultrasonic Sensor Water Tank (Slave 1 PIC)
 
