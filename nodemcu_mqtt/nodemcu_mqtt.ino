@@ -43,14 +43,16 @@ int timeInt;
 String feed1_0, feed1_1, feed1_2, feed2_0, feed2_1, feed2_2, feed1;
 String wash1_0, wash1_1, wash1_2, wash2_0, wash2_1, wash2_2;
 
-String manual_feed_0p5KG, manual_feed_1KG, manual_feed_1p5KG;
-String scheduled_feed_0p5KG, scheduled_feed_1KG, scheduled_feed_1p5KG;
+bool manual_feed_0p5KG, manual_feed_1KG, manual_feed_1p5KG;
+bool scheduled_feed_0p5KG, scheduled_feed_1KG, scheduled_feed_1p5KG;
 
 String timeTest = "7:30 PM";
 
 bool x = false;
 
 String check;
+
+String msg;
 
 // feed 1 voids
 void feed_1_on_0p5kg () {
@@ -128,40 +130,40 @@ void callback(String topic, byte* message, unsigned int length) {
   // CAGE 1 Feed
   if(topic=="cage_1/feed_1"){
     if((messageInfo == "ON 0.5 KG") || (messageInfo == "0.5 KG ON")){
-      manual_feed_0p5KG = messageInfo;
+      msg =  "Manual feed 0.5KG at " + timeRead;
       feed_1_on_0p5kg ();
       Serial.println("Manual feed 0.5 KG");
-      espclient.publish("cage_1/logs", "Manual feed 0.5KG at ", timeRead.c_str());
-      }
-    else if((messageInfo == "ON1 0.5 KG") || (messageInfo == "0.5 KG ON1")){
-      scheduled_feed_0p5KG = messageInfo;
+      espclient.publish("cage_1/logs", msg.c_str());
+      }  
+    if((messageInfo == "ON1 0.5 KG") || (messageInfo == "0.5 KG ON1")){
+      msg = "Scheduled feed 0.5KG at " + timeRead;
       feed_1_on_0p5kg ();
-      Serial.println("Scheduled feed 0.5 KG");
-      espclient.publish("cage_1/logs", "Scheduled feed 0.5KG at ", timeRead.c_str());
-      }   
-    else if((messageInfo == "ON 1 KG") || (messageInfo == "1 KG ON")){
-      manual_feed_1KG = messageInfo;
+      Serial.println("Scheduled feed 0.5KG");
+      espclient.publish("cage_1/logs", msg.c_str()); 
+      }    
+    if((messageInfo == "ON 1 KG") || (messageInfo == "1 KG ON")){
+      msg = "Manual feed 1KG at " + timeRead;
       feed_1_on_1kg ();
-      Serial.println("Manual feed 1 KG");
-      espclient.publish("cage_1/logs", "Manual feed 1KG at ", timeRead.c_str());
+      Serial.println("Manual feed 1KG");
+      espclient.publish("cage_1/logs", msg.c_str());
     }
-    else if((messageInfo == "ON1 1 KG") || (messageInfo == "1 KG ON1")){
-      scheduled_feed_1KG = messageInfo;
+    if((messageInfo == "ON1 1 KG") || (messageInfo == "1 KG ON1")){
+      msg = "Scheduled feed 1KG at " + timeRead;
       feed_1_on_1kg ();
-      Serial.println("Scheduled feed 1 KG");
-      espclient.publish("cage_1/logs", "Scheduled feed 1KG at ", timeRead.c_str());
+      Serial.println("Scheduled feed 1KG");
+      espclient.publish("cage_1/logs", msg.c_str());
     }
-    else if((messageInfo == "ON 1.5 KG") || (messageInfo == "1.5 KG ON")){
-      manual_feed_1p5KG = messageInfo;
+    if((messageInfo == "ON 1.5 KG") || (messageInfo == "1.5 KG ON")){
+      msg = "Manual feed 1.5KG at " + timeRead;
       feed_1_on_1p5kg ();
-      Serial.println("Manual 1.5 KG");
-      espclient.publish("cage_1/logs", "Manual feed 1.5KG at ", timeRead.c_str());
+      Serial.println("Manual feed 1.5KG");
+      espclient.publish("cage_1/logs", msg.c_str());
     }
-    else if((messageInfo == "ON1 1.5 KG") || (messageInfo == "1.5 KG ON1")){
-      scheduled_feed_1p5KG = messageInfo;
+    if((messageInfo == "ON1 1.5 KG") || (messageInfo == "1.5 KG ON1")){
+      msg = "Scheduled feed 1.5KG at " + timeRead;
       feed_1_on_1p5kg ();
-      Serial.println("Scheduled feed 1.5 KG");
-      espclient.publish("cage_1/logs", "Scheduled feed 1.5KG at ", timeRead.c_str());
+      Serial.println("Scheduled feed 1.5KG");
+      espclient.publish("cage_1/logs", msg.c_str());
     }
   }
 
@@ -340,13 +342,11 @@ void setup()
  
 void loop() 
 {
-
   if(millis() >= delay_sched + 500){
       delay_sched += 500;
 
       mySerial.write('o');
   }
-
 
 if (mySerial2.read() == 't'){
       timeRead = mySerial2.readStringUntil('\n');
