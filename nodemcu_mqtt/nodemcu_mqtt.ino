@@ -133,37 +133,31 @@ void callback(String topic, byte* message, unsigned int length) {
       msg =  "Manual feed 0.5KG at " + timeRead;
       feed_1_on_0p5kg ();
       Serial.println("Manual feed 0.5 KG");
-      espclient.publish("cage_1/logs", msg.c_str());
       }  
     if((messageInfo == "ON1 0.5 KG") || (messageInfo == "0.5 KG ON1")){
       msg = "Scheduled feed 0.5KG at " + timeRead;
       feed_1_on_0p5kg ();
       Serial.println("Scheduled feed 0.5KG");
-      espclient.publish("cage_1/logs", msg.c_str()); 
       }    
     if((messageInfo == "ON 1 KG") || (messageInfo == "1 KG ON")){
       msg = "Manual feed 1KG at " + timeRead;
       feed_1_on_1kg ();
       Serial.println("Manual feed 1KG");
-      espclient.publish("cage_1/logs", msg.c_str());
     }
     if((messageInfo == "ON1 1 KG") || (messageInfo == "1 KG ON1")){
       msg = "Scheduled feed 1KG at " + timeRead;
       feed_1_on_1kg ();
       Serial.println("Scheduled feed 1KG");
-      espclient.publish("cage_1/logs", msg.c_str());
     }
     if((messageInfo == "ON 1.5 KG") || (messageInfo == "1.5 KG ON")){
       msg = "Manual feed 1.5KG at " + timeRead;
       feed_1_on_1p5kg ();
       Serial.println("Manual feed 1.5KG");
-      espclient.publish("cage_1/logs", msg.c_str());
     }
     if((messageInfo == "ON1 1.5 KG") || (messageInfo == "1.5 KG ON1")){
       msg = "Scheduled feed 1.5KG at " + timeRead;
       feed_1_on_1p5kg ();
       Serial.println("Scheduled feed 1.5KG");
-      espclient.publish("cage_1/logs", msg.c_str());
     }
   }
 
@@ -358,6 +352,15 @@ if (mySerial2.read() == 't'){
       //espclient.publish("feed_tank_1", String(ultrasonicIntY).c_str());
   }
 
+if (mySerial2.read() == 'x') {
+      ultrasonicRead = mySerial2.readStringUntil('\r');
+      ultrasonicInt = ultrasonicRead.toInt();
+      Serial.println();
+      Serial.print("Water Tank : ");
+      Serial.print(ultrasonicInt);
+      espclient.publish("water_tank", String(ultrasonicInt).c_str());
+  }  
+
   if (Serial.read() == 'z') {
       ultrasonicReadZ = Serial.readStringUntil('\r');
       ultrasonicIntZ = ultrasonicReadZ.toInt();
@@ -374,15 +377,7 @@ if (mySerial.read() == 'y'){
       Serial.print("Feed Tank 1: ");
       Serial.print(ultrasonicIntY);
       espclient.publish("feed_tank_1", String(ultrasonicIntY).c_str());
-  }
-
-  if (mySerial2.read() == 'x') {
-      ultrasonicRead = mySerial2.readStringUntil('\r');
-      ultrasonicInt = ultrasonicRead.toInt();
-      Serial.println();
-      Serial.print("Water Tank : ");
-      Serial.print(ultrasonicInt);
-      espclient.publish("water_tank", String(ultrasonicInt).c_str());
+      espclient.publish("cage_1/logs", msg.c_str());
   }
 
 
