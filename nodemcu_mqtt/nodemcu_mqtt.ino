@@ -56,7 +56,7 @@ String timeTest = "7:30 PM";
 
 bool x = false;
 
-String indicator = "OFF";
+bool indicator = false;
 
 String check;
 
@@ -140,7 +140,7 @@ void callback(String topic, byte * message, unsigned int length) {
   if (topic == "cage_1/feed_1") {
     if ((messageInfo == "ON 0.5 KG") || (messageInfo == "0.5 KG ON")) {
       //cage_1_feed_1 = messageInfo;
-      indicator = "ON";
+      indicator = true;
       msg1 = "Manual feed 0.5KG at " + dateRead + " " + timeRead;
       feed_1_on_0p5kg();
       Serial.println("Cage 1 Manual feed 0.5 KG");
@@ -417,15 +417,30 @@ void loop() {
         espclient.publish("cage_1/indicator", "success");
 }*/
 
-//while (indicator == "ON") {
-while (mySerial.read() == 'S') {
-  //while (indicator == "ON") {
-        Serial.println("success");
+while (indicator == true) {
+
+    delay(100);
+    if (mySerial.read() == 'S') {
+      Serial.println("success");
         espclient.publish("cage_1/indicator", "success");
-        indicator = "OFF";
- // }
+
+        indicator = false;
+    }
+
+
+    else {
+      if (millis() >= failed_delay + 3000) {
+  failed_delay += 3000;
+      while (indicator == true) {
+      Serial.println("failed");
+      espclient.publish("cage_1/indicator", "failed");
+      delay(1000);
+      espclient.publish("cage_1/indicator", " ");
+      indicator = false;
       }
-//}
+      }
+    }
+}
    /*if ((cage_1_feed_1 == "ON 0.5 KG") || (cage_1_feed_1 == "0.5 KG ON")) {
      indicator = "ON";
       msg1 = "Manual feed 0.5KG at " + dateRead + " " + timeRead;
@@ -437,15 +452,6 @@ while (mySerial.read() == 'S') {
      cage_1_feed_1 = " ";
   }*/
 
-  if (millis() >= time_now + 15000) {
-    time_now += 15000;
-
-    while (indicator == "ON") {
-      Serial.println("failed");
-      espclient.publish("cage_1/indicator", "failed");
-      indicator = "OFF";
-    }
-  }
 
   if ((timeRead == feed1_0) || (timeRead == feed1_1) || (timeRead == feed1_2)) {
     Serial.println("feed 1 scheduled successful!");
