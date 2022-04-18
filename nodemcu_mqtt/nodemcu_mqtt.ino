@@ -67,7 +67,7 @@ bool feed_2_scheduled_warning = false;
 
 String check;
 
-String msg1, msg2;
+String msg1, msg2, msg1_failed, msg2_failed, msg1_success, msg2_success;
 
 String cage_1_feed_1;
 
@@ -148,33 +148,39 @@ void callback(String topic, byte * message, unsigned int length) {
     if ((messageInfo == "ON 0.5 KG") || (messageInfo == "0.5 KG ON")) {
       //cage_1_feed_1 = messageInfo;
       feed_1_manual_indicator = true;
-      msg1 = "Feed 0.5KG Manual " + dateRead + " " + timeRead + " Successful";
+      msg1 = "Feed 0.5KG Manual " + dateRead + " " + timeRead;
+      msg1_success = msg1 + " Successful";
       feed_1_on_0p5kg();
       Serial.println("Cage 1 Manual feed 0.5 KG");
     }
     if ((messageInfo == "ON1 0.5 KG") || (messageInfo == "0.5 KG ON1")) {
       feed_1_scheduled_indicator = true;
-      msg1 ="Feed 0.5KG Scheduled " + dateRead + " " + timeRead + " Successful";
+      msg1 ="Feed 0.5KG Scheduled " + dateRead + " " + timeRead;
+      msg1_success = msg1 + " Successful";
       feed_1_on_0p5kg();
       Serial.println("Cage 1 Scheduled feed 0.5KG");
     }
     if ((messageInfo == "ON 1 KG") || (messageInfo == "1 KG ON")) {
-      msg1 = "Feed 1KG Manual " + dateRead + " " + timeRead + " Successful";
+      msg1 = "Feed 1KG Manual " + dateRead + " " + timeRead;
+      msg1_success = msg1 + " Successful";
       feed_1_on_1kg();
       Serial.println("Cage 1 Manual feed 1KG");
     }
     if ((messageInfo == "ON1 1 KG") || (messageInfo == "1 KG ON1")) {
-      msg1 = "Feed 1KG Scheduled " + dateRead + " " + timeRead + " Successful";
+      msg1 = "Feed 1KG Scheduled " + dateRead + " " + timeRead;
+      msg1_success = msg1 + " Successful";
       feed_1_on_1kg();
       Serial.println("Cage 1 Scheduled feed 1KG");
     }
     if ((messageInfo == "ON 1.5 KG") || (messageInfo == "1.5 KG ON")) {
-      msg1 = "Feed 1.5KG Manual " + dateRead + " " + timeRead + " Successful";
+      msg1 = "Feed 1.5KG Manual " + dateRead + " " + timeRead;
+      msg1_success = msg1 + " Successful";
       feed_1_on_1p5kg();
       Serial.println("Cage 1 Manual feed 1.5KG");
     }
     if ((messageInfo == "ON1 1.5 KG") || (messageInfo == "1.5 KG ON1")) {
-      msg1 = "Feed 1.5KG Scheduled " + dateRead + " " + timeRead + " Successful";
+      msg1 = "Feed 1.5KG Scheduled " + dateRead + " " + timeRead;
+      msg1_success = msg1 + " Successful";
       feed_1_on_1p5kg();
       Serial.println("Cage 1 Scheduled feed 1.5KG");
     }
@@ -183,32 +189,38 @@ void callback(String topic, byte * message, unsigned int length) {
   // CAGE 2 Feed
   if (topic == "cage_2/feed_2") {
     if ((messageInfo == "ON 0.5 KG") || (messageInfo == "0.5 KG ON")) {
-      msg2 = "Feed 0.5KG Manual " + dateRead + " " + timeRead + " Successful";
+      msg2 = "Feed 0.5KG Manual " + dateRead + " " + timeRead;
+      msg2_success = msg2 + " Successful";
       feed_2_on_0p5kg();
       Serial.println("Cage 2 Manual feed 0.5 KG");
     }
     if ((messageInfo == "ON1 0.5 KG") || (messageInfo == "0.5 KG ON1")) {
-      msg2 = "Feed 0.5KG Scheduled " + dateRead + " " + timeRead + " Successful";
+      msg2 = "Feed 0.5KG Scheduled " + dateRead + " " + timeRead;
+      msg2_success = msg2 + " Successful";
       feed_2_on_0p5kg();
       Serial.println("Cage 2 Scheduled feed 0.5KG");
     }
     if ((messageInfo == "ON 1 KG") || (messageInfo == "1 KG ON")) {
-      msg2 = "Feed 1KG Manual " + dateRead + " " + timeRead + " Successful";
+      msg2 = "Feed 1KG Manual " + dateRead + " " + timeRead;
+      msg2_success = msg2 + " Successful";
       feed_2_on_1kg();
       Serial.println("Cage 2 Manual feed 1KG");
     }
     if ((messageInfo == "ON1 1 KG") || (messageInfo == "1 KG ON1")) {
-      msg2 = "Feed 1KG Scheduled " + dateRead + " " + timeRead + " Successful";
+      msg2 = "Feed 1KG Scheduled " + dateRead + " " + timeRead;
+      msg2_success = msg2 + " Successful";
       feed_2_on_1kg();
       Serial.println("Cage 2 Scheduled feed 1KG");
     }
     if ((messageInfo == "ON 1.5 KG") || (messageInfo == "1.5 KG ON")) {
-      msg2 = "Feed 1.5KG Manual " + dateRead + " " + timeRead + " Successful";
+      msg2 = "Feed 1.5KG Manual " + dateRead + " " + timeRead;
+      msg2_success = msg2 + " Successful";
       feed_2_on_1p5kg();
       Serial.println("Cage 2 Manual feed 1.5KG");
     }
     if ((messageInfo == "ON1 1.5 KG") || (messageInfo == "1.5 KG ON1")) {
-      msg2 = "Feed 1.5KG Scheduled " + dateRead + " " + timeRead + " Successful";
+      msg2 = "Feed 1.5KG Scheduled " + dateRead + " " + timeRead;
+      msg2_success = msg2 + " Successful";
       feed_2_on_1p5kg();
       Serial.println("Cage 2 Scheduled feed 1.5KG");
     }
@@ -410,7 +422,7 @@ void loop() {
     Serial.print("Feed Tank 2: ");
     Serial.print(ultrasonicIntZ);
     espclient.publish("feed_tank_2", String(ultrasonicIntZ).c_str());
-    espclient.publish("cage_2/logs/successful", msg2.c_str());
+    espclient.publish("cage_2/logs/successful", msg2_success.c_str());
   }
 
   if (mySerial.read() == 'y') {
@@ -420,7 +432,7 @@ void loop() {
     Serial.print("Feed Tank 1: ");
     Serial.print(ultrasonicIntY);
     espclient.publish("feed_tank_1", String(ultrasonicIntY).c_str());
-    espclient.publish("cage_1/logs/successful", msg1.c_str());
+    espclient.publish("cage_1/logs/successful", msg1_success.c_str());
   }
 
 /*if (mySerial.read() == 'S') {
@@ -446,8 +458,10 @@ while (feed_1_manual_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (feed_1_manual_indicator == true) {
+      msg1_failed = msg1 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_1/feed_1_manual_indicator", "failed");
+      espclient.publish("cage_1/logs/failed", msg1_failed.c_str());
       delay(1000);
       espclient.publish("cage_1/feed_1_manual_indicator", " ");
       feed_1_manual_indicator = false;
@@ -462,6 +476,8 @@ while (feed_1_scheduled_indicator == true) {
     if (mySerial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_1/feed_1_scheduled_indicator", "success");
+        delay(1000);
+        espclient.publish("cage_1/feed_1_scheduled_indicator", " ");
 
         feed_1_scheduled_indicator = false;
     }
@@ -471,8 +487,10 @@ while (feed_1_scheduled_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (feed_1_scheduled_indicator == true) {
+      msg1_failed = msg1 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_1/feed_1_scheduled_indicator", "failed");
+      espclient.publish("cage_1/logs/failed", msg1_failed.c_str());
       delay(1000);
       espclient.publish("cage_1/feed_1_scheduled_indicator", " ");
       feed_1_scheduled_indicator = false;
