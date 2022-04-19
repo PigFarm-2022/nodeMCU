@@ -58,6 +58,8 @@ String timeTest = "7:30 PM";
 
 bool x = false;
 bool y = false;
+bool t = false;
+bool T = false;
 
 bool feed_1_manual_indicator = false;
 bool feed_2_manual_indicator = false;
@@ -88,19 +90,24 @@ String cage_1_feed_1;
 
 char mySerial_rd;
 
+int prevUltrasonic;
+
 // feed 1 voids
 void feed_1_on_0p5kg() {
   mySerial.write('a'); // Write integer 111 to PIC
+  mySerial.write('o');
   espclient.publish("cage_1/feed_1/switch", "OFF");
 }
 
 void feed_1_on_1kg() {
   mySerial.write('b'); // Write integer 112 to PIC
+  mySerial.write('o');
   espclient.publish("cage_1/feed_1/switch", "OFF");
 }
 
 void feed_1_on_1p5kg() {
   mySerial.write('c'); // Write integer 113 to PIC
+  mySerial.write('o');
   espclient.publish("cage_1/feed_1/switch", "OFF");
 }
 
@@ -540,6 +547,9 @@ void setup() {
   espclient.setServer(mqtt_server, 1883);
   espclient.setCallback(callback);
 
+  ultrasonicIntY = 100;
+  ultrasonicIntZ = 100;
+
 }
 
 void loop() {
@@ -569,6 +579,22 @@ void loop() {
     Serial.print(timeRead);
   }
 
+if (prevUltrasonic != ultrasonicInt) {
+  if (ultrasonicInt < 50) {
+    mySerial.write('t');
+    prevUltrasonic = ultrasonicInt;
+  }
+
+  if (ultrasonicInt > 90) {
+    mySerial.write('T');
+    prevUltrasonic = ultrasonicInt;
+  }
+}
+    /*else if ((ultrasonicInt > 90) && (!T)) {
+      mySerial.write('T');
+      T = true;
+    }*/
+
   if ((Serial.read() == 'z') || (Serial.read() == 'R')) {
     ultrasonicReadZ = Serial.readStringUntil('\r');
     ultrasonicIntZ = ultrasonicReadZ.toInt();
@@ -576,16 +602,22 @@ void loop() {
     Serial.print("Feed Tank 2: ");
     Serial.print(ultrasonicIntZ);
     espclient.publish("feed_tank_2", String(ultrasonicIntZ).c_str());
+    if (ultrasonicIntZ <= 10) {
+      mySerial.write('z');
+    }
   }
 
-  if ((mySerial_rd == 'y') || (mySerial_rd == 'r')) {
-    mySerial_rd = ' ';
+  if (mySerial_rd == 'y') {
     ultrasonicReadY = mySerial.readStringUntil('\r');
     ultrasonicIntY = ultrasonicReadY.toInt();
     Serial.println();
     Serial.print("Feed Tank 1: ");
     Serial.print(ultrasonicIntY);
-    espclient.publish("feed_tank_1", String(ultrasonicIntY).c_str());  
+    espclient.publish("feed_tank_1", String(ultrasonicIntY).c_str());
+    if (ultrasonicIntY <= 80) {
+      mySerial.write('y');
+      mySerial.write('o');
+    } 
   }
 
 while (feed_1_manual_indicator == true) {
@@ -1069,11 +1101,11 @@ if (ultrasonicIntZ < 10) {
     }
   }
 
-  if (millis() >= delay_sched + 500) {
+  /*if (millis() >= delay_sched + 500) {
     delay_sched += 500;
 
     mySerial.write('o');
-  }
+  }*/
 
   //Serial.println(feed1);
 
