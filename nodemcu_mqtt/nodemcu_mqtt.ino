@@ -20,6 +20,8 @@ int period = 500;
 unsigned long time_now = 0;
 unsigned long time_now2 = 0;
 unsigned long delay_sched = 0;
+unsigned long delay1 = 0;
+unsigned long delay2 = 0;
 unsigned long success_delay = 0;
 unsigned long failed_delay = 0;
 
@@ -60,6 +62,10 @@ bool x = false;
 bool y = false;
 bool t = false;
 bool T = false;
+int temp1 = 1;
+int temp2 = 0;
+int temp3 = 1;
+int temp4 = 0;
 
 bool feed_1_manual_indicator = false;
 bool feed_2_manual_indicator = false;
@@ -89,6 +95,8 @@ String msg1, msg2, msg1_failed, msg2_failed, msg1_success, msg2_success;
 String cage_1_feed_1;
 
 char mySerial_rd;
+char mySerial2_rd;
+char Serial_rd;
 
 int prevUltrasonic;
 
@@ -166,16 +174,16 @@ void callback(String topic, byte * message, unsigned int length) {
   if (topic == "cage_1/refresh") {
     if (messageInfo == "ON") {
       mySerial.write('r');
-      Serial.print("refresh1");
       espclient.publish("cage_1/refresh/switch", "OFF");
+      Serial.print("refresh1");
     }
   }
 
   if (topic == "cage_2/refresh") {
     if (messageInfo == "ON") {
       mySerial.write('R');
+      espclient.publish("cage_2/refresh/switch", "OFF");
       Serial.print("refresh2");
-      espclient.publish("cage_1/refresh/switch", "OFF");
     }
   }
 
@@ -555,6 +563,8 @@ void setup() {
 void loop() {
 
   mySerial_rd = mySerial.read();
+  mySerial2_rd = mySerial2.read(); 
+  Serial_rd = Serial.read();
 
   if (mySerial2.read() == 'x') {
     ultrasonicRead = mySerial2.readStringUntil('\r');
@@ -578,24 +588,21 @@ void loop() {
     Serial.print("time: ");
     Serial.print(timeRead);
   }
-
-if (prevUltrasonic != ultrasonicInt) {
-  if (ultrasonicInt < 50) {
-    mySerial.write('t');
-    prevUltrasonic = ultrasonicInt;
-  }
-
-  if (ultrasonicInt > 90) {
-    mySerial.write('T');
-    prevUltrasonic = ultrasonicInt;
-  }
-}
-    /*else if ((ultrasonicInt > 90) && (!T)) {
+    
+    /*if ((ultrasonicInt <= 50) && (ultrasonicInt >= 0)) {
+      ultrasonicInt = temp;
+      Serial.print("Refilling");
+      mySerial.write('t');
+      temp = 200;
+    } 
+    if ((ultrasonicInt >= 90) && (ultrasonicInt <= 100)){
+      ultrasonicInt = temp;
+      Serial.print("Refilled!");
       mySerial.write('T');
-      T = true;
+      temp = 200;
     }*/
 
-  if ((Serial.read() == 'z') || (Serial.read() == 'R')) {
+  if (Serial_rd == 'z') {
     ultrasonicReadZ = Serial.readStringUntil('\r');
     ultrasonicIntZ = ultrasonicReadZ.toInt();
     Serial.println();
@@ -604,10 +611,11 @@ if (prevUltrasonic != ultrasonicInt) {
     espclient.publish("feed_tank_2", String(ultrasonicIntZ).c_str());
     if (ultrasonicIntZ <= 10) {
       mySerial.write('z');
+      mySerial.write('o');
     }
   }
 
-  if (mySerial_rd == 'y') {
+  if (mySerial_rd == 'y'){
     ultrasonicReadY = mySerial.readStringUntil('\r');
     ultrasonicIntY = ultrasonicReadY.toInt();
     Serial.println();
@@ -623,7 +631,7 @@ if (prevUltrasonic != ultrasonicInt) {
 while (feed_1_manual_indicator == true) {
 
     delay(100);
-    if (mySerial.read() == 'S') {
+    if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/feed_1_manual_indicator", "success");
         delay(1000);
@@ -653,7 +661,7 @@ while (feed_1_manual_indicator == true) {
 while (feed_1_scheduled_indicator == true) {
 
     delay(100);
-    if (mySerial.read() == 'S') {
+    if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/feed_1_scheduled_indicator", "success");
         delay(1000);
@@ -740,7 +748,7 @@ while (feed_2_scheduled_indicator == true) {
 while (wash_1_manual_indicator == true) {
 
     delay(100);
-    if (mySerial.read() == 'S') {
+    if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/wash_1_manual_indicator", "success");
         delay(1000);
@@ -769,7 +777,7 @@ while (wash_1_manual_indicator == true) {
 while (wash_1_scheduled_indicator == true) {
 
     delay(100);
-    if (mySerial.read() == 'S') {
+    if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/wash_1_scheduled_indicator", "success");
         delay(1000);
@@ -857,7 +865,7 @@ while (wash_2_scheduled_indicator == true) {
 while (bath_1_manual_indicator == true) {
 
     delay(100);
-    if (mySerial.read() == 'S') {
+    if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/bath_1_manual_indicator", "success");
         delay(1000);
@@ -887,7 +895,7 @@ while (bath_1_manual_indicator == true) {
 while (bath_1_scheduled_indicator == true) {
 
     delay(100);
-    if (mySerial.read() == 'S') {
+    if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/bath_1_scheduled_indicator", "success");
         delay(1000);
@@ -1101,11 +1109,11 @@ if (ultrasonicIntZ < 10) {
     }
   }
 
-  /*if (millis() >= delay_sched + 500) {
+  if (millis() >= delay_sched + 500) {
     delay_sched += 500;
 
     mySerial.write('o');
-  }*/
+  }
 
   //Serial.println(feed1);
 
