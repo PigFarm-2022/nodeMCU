@@ -166,6 +166,7 @@ void callback(String topic, byte * message, unsigned int length) {
   if (topic == "cage_1/refresh") {
     if (messageInfo == "ON") {
       mySerial.write('r');
+      mySerial.write('o');
       espclient.publish("cage_1/refresh/switch", "OFF");
       Serial.print("refresh1");
     }
@@ -174,6 +175,7 @@ void callback(String topic, byte * message, unsigned int length) {
   if (topic == "cage_2/refresh") {
     if (messageInfo == "ON") {
       mySerial.write('R');
+      mySerial.write('o');
       espclient.publish("cage_2/refresh/switch", "OFF");
       Serial.print("refresh2");
     }
@@ -629,16 +631,8 @@ void loop() {
       mySerial.write('y');
       mySerial.write("ooooooooo");
     }
-
-    if ((ultrasonicIntY > 80) && (b == true)) {
-      b = false;
-      if (b = false) {
-      mySerial.write('y');
-      mySerial.write('o');
-      a = true;
-      }
-    }  
   }
+
 
 while (feed_1_manual_indicator == true) {
 
