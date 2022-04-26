@@ -637,7 +637,7 @@ void loop() {
     }
   }
 
-  if (mySerial.read() == 's') {
+  if (mySerial.read() == 'k') {
     Serial.println("Cage 1 thermal detected");
     espclient.publish("cage_1/wash_1_sensor_indicator", "success");
     delay(1000);
@@ -646,13 +646,13 @@ void loop() {
     espclient.publish("cage_1/logs/successful", msg1_detected.c_str());
   }
 
-  if (mySerial.read() == 'S') {
+  if (Serial.read() == 'K') {
     Serial.println("Cage 2 thermal detected");
     espclient.publish("cage_2/wash_2_sensor_indicator", "success");
     delay(1000);
     espclient.publish("cage_2/wash_2_sensor_indicator", " ");
-    msg1_detected = "Wash|Detected|" + timeRead + "|" + dateRead + "|Successful";
-    espclient.publish("cage_2/logs/successful", msg1_detected.c_str());
+    msg2_detected = "Wash|Detected|" + timeRead + "|" + dateRead + "|Successful";
+    espclient.publish("cage_2/logs/successful", msg2_detected.c_str());
   }
 
 
