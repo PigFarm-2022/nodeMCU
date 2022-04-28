@@ -446,14 +446,12 @@ void reconnect() {
       espclient.subscribe("cage_1/feed_1");
       espclient.subscribe("cage_1/feed_1/switch");
       espclient.subscribe("cage_1/weight_1");
-      espclient.subscribe("cage_1/logs/successful");
-      espclient.subscribe("cage_1/logs/failed");
+      espclient.subscribe("cage_1/logs");
 
       espclient.subscribe("cage_2/feed_2");
       espclient.subscribe("cage_2/feed_2/switch");
       espclient.subscribe("cage_2/weight_2");
-      espclient.subscribe("cage_2/logs/successful");
-      espclient.subscribe("cage_2/logs/failed");
+      espclient.subscribe("cage_2/logs");
 
       espclient.subscribe("water_tank");
       espclient.subscribe("feed_tank_1");
@@ -643,7 +641,7 @@ void loop() {
     delay(1000);
     espclient.publish("cage_1/wash_1_sensor_indicator", " ");
     msg1_detected = "Wash|Detected|" + timeRead + "|" + dateRead + "|Successful";
-    espclient.publish("cage_1/logs/successful", msg1_detected.c_str());
+    espclient.publish("cage_1/logs", msg1_detected.c_str());
   }
 
   if (Serial.read() == 'K') {
@@ -652,20 +650,20 @@ void loop() {
     delay(1000);
     espclient.publish("cage_2/wash_2_sensor_indicator", " ");
     msg2_detected = "Wash|Detected|" + timeRead + "|" + dateRead + "|Successful";
-    espclient.publish("cage_2/logs/successful", msg2_detected.c_str());
+    espclient.publish("cage_2/logs", msg2_detected.c_str());
   }
 
 
 
 while (feed_1_manual_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/feed_1_manual_indicator", "success");
         delay(1000);
         espclient.publish("cage_1/feed_1_manual_indicator", " ");
-        espclient.publish("cage_1/logs/successful", msg1_success.c_str());
+        espclient.publish("cage_1/logs", msg1_success.c_str());
 
         feed_1_manual_indicator = false;
     }
@@ -678,7 +676,7 @@ while (feed_1_manual_indicator == true) {
       msg1_failed = msg1 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_1/feed_1_manual_indicator", "failed");
-      espclient.publish("cage_1/logs/failed", msg1_failed.c_str());
+      espclient.publish("cage_1/logs", msg1_failed.c_str());
       delay(1000);
       espclient.publish("cage_1/feed_1_manual_indicator", " ");
       feed_1_manual_indicator = false;
@@ -689,13 +687,13 @@ while (feed_1_manual_indicator == true) {
 
 while (feed_1_scheduled_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/feed_1_scheduled_indicator", "success");
         delay(1000);
         espclient.publish("cage_1/feed_1_scheduled_indicator", " ");
-        espclient.publish("cage_1/logs/successful", msg1_success.c_str());
+        espclient.publish("cage_1/logs", msg1_success.c_str());
         feed_1_scheduled_indicator = false;
     }
 
@@ -707,7 +705,7 @@ while (feed_1_scheduled_indicator == true) {
       msg1_failed = msg1 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_1/feed_1_scheduled_indicator", "failed");
-      espclient.publish("cage_1/logs/failed", msg1_failed.c_str());
+      espclient.publish("cage_1/logs", msg1_failed.c_str());
       delay(1000);
       espclient.publish("cage_1/feed_1_scheduled_indicator", " ");
       feed_1_scheduled_indicator = false;
@@ -718,13 +716,13 @@ while (feed_1_scheduled_indicator == true) {
 
 while (feed_2_manual_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/feed_2_manual_indicator", "success");
         delay(1000);
         espclient.publish("cage_2/feed_2_manual_indicator", " ");
-        espclient.publish("cage_2/logs/successful", msg2_success.c_str());
+        espclient.publish("cage_2/logs", msg2_success.c_str());
         feed_2_manual_indicator = false;
     }
 
@@ -736,7 +734,7 @@ while (feed_2_manual_indicator == true) {
       msg2_failed = msg2 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_2/feed_2_manual_indicator", "failed");
-      espclient.publish("cage_2/logs/failed", msg2_failed.c_str());
+      espclient.publish("cage_2/logs", msg2_failed.c_str());
       delay(1000);
       espclient.publish("cage_2/feed_2_manual_indicator", " ");
       feed_2_manual_indicator = false;
@@ -747,13 +745,13 @@ while (feed_2_manual_indicator == true) {
 
 while (feed_2_scheduled_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/feed_2_scheduled_indicator", "success");
         delay(1000);
         espclient.publish("cage_2/feed_2_scheduled_indicator", " ");
-        espclient.publish("cage_2/logs/successful", msg2_success.c_str());
+        espclient.publish("cage_2/logs", msg2_success.c_str());
         feed_2_scheduled_indicator = false;
     }
 
@@ -765,7 +763,7 @@ while (feed_2_scheduled_indicator == true) {
       msg2_failed = msg2 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_2/feed_2_scheduled_indicator", "failed");
-      espclient.publish("cage_2/logs/failed", msg2_failed.c_str());
+      espclient.publish("cage_2/logs", msg2_failed.c_str());
       delay(1000);
       espclient.publish("cage_2/feed_2_scheduled_indicator", " ");
       feed_2_scheduled_indicator = false;
@@ -776,13 +774,13 @@ while (feed_2_scheduled_indicator == true) {
 
 while (wash_1_manual_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/wash_1_manual_indicator", "success");
         delay(1000);
         espclient.publish("cage_1/wash_1_manual_indicator", " ");
-        espclient.publish("cage_1/logs/successful", msg1_success.c_str());
+        espclient.publish("cage_1/logs", msg1_success.c_str());
         wash_1_manual_indicator = false;
     }
 
@@ -794,7 +792,7 @@ while (wash_1_manual_indicator == true) {
       msg1_failed = msg1 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_1/wash_1_manual_indicator", "failed");
-      espclient.publish("cage_1/logs/failed", msg1_failed.c_str());
+      espclient.publish("cage_1/logs", msg1_failed.c_str());
       delay(1000);
       espclient.publish("cage_1/wash_1_manual_indicator", " ");
       wash_1_manual_indicator = false;
@@ -805,13 +803,13 @@ while (wash_1_manual_indicator == true) {
 
 while (wash_1_scheduled_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/wash_1_scheduled_indicator", "success");
         delay(1000);
         espclient.publish("cage_1/wash_1_scheduled_indicator", " ");
-        espclient.publish("cage_1/logs/successful", msg1_success.c_str());
+        espclient.publish("cage_1/logs", msg1_success.c_str());
         wash_1_scheduled_indicator = false;
     }
 
@@ -823,7 +821,7 @@ while (wash_1_scheduled_indicator == true) {
       msg1_failed = msg1 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_1/wash_1_scheduled_indicator", "failed");
-      espclient.publish("cage_1/logs/failed", msg1_failed.c_str());
+      espclient.publish("cage_1/logs", msg1_failed.c_str());
       delay(1000);
       espclient.publish("cage_1/wash_1_scheduled_indicator", " ");
       wash_1_scheduled_indicator = false;
@@ -834,13 +832,13 @@ while (wash_1_scheduled_indicator == true) {
 
 while (wash_2_manual_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/wash_2_manual_indicator", "success");
         delay(1000);
         espclient.publish("cage_2/wash_2_manual_indicator", " ");
-        espclient.publish("cage_2/logs/successful", msg2_success.c_str());
+        espclient.publish("cage_2/logs", msg2_success.c_str());
         wash_2_manual_indicator = false;
     }
 
@@ -852,7 +850,7 @@ while (wash_2_manual_indicator == true) {
       msg2_failed = msg2 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_2/wash_2_manual_indicator", "failed");
-      espclient.publish("cage_2/logs/failed", msg2_failed.c_str());
+      espclient.publish("cage_2/logs", msg2_failed.c_str());
       delay(1000);
       espclient.publish("cage_2/wash_2_manual_indicator", " ");
       wash_2_manual_indicator = false;
@@ -863,13 +861,13 @@ while (wash_2_manual_indicator == true) {
 
 while (wash_2_scheduled_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/wash_2_scheduled_indicator", "success");
         delay(1000);
         espclient.publish("cage_2/wash_2_scheduled_indicator", " ");
-        espclient.publish("cage_2/logs/successful", msg2_success.c_str());
+        espclient.publish("cage_2/logs", msg2_success.c_str());
 
         wash_2_scheduled_indicator = false;
     }
@@ -882,7 +880,7 @@ while (wash_2_scheduled_indicator == true) {
       msg2_failed = msg2 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_2/wash_2_scheduled_indicator", "failed");
-      espclient.publish("cage_2/logs/failed", msg2_failed.c_str());
+      espclient.publish("cage_2/logs", msg2_failed.c_str());
       delay(1000);
       espclient.publish("cage_2/wash_2_scheduled_indicator", " ");
       wash_2_scheduled_indicator = false;
@@ -893,13 +891,13 @@ while (wash_2_scheduled_indicator == true) {
 
 while (bath_1_manual_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/bath_1_manual_indicator", "success");
         delay(1000);
         espclient.publish("cage_1/bath_1_manual_indicator", " ");
-        espclient.publish("cage_1/logs/successful", msg1_success.c_str());
+        espclient.publish("cage_1/logs", msg1_success.c_str());
 
         bath_1_manual_indicator = false;
     }
@@ -912,7 +910,7 @@ while (bath_1_manual_indicator == true) {
       msg1_failed = msg1 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_1/bath_1_manual_indicator", "failed");
-      espclient.publish("cage_1/logs/failed", msg1_failed.c_str());
+      espclient.publish("cage_1/logs", msg1_failed.c_str());
       delay(1000);
       espclient.publish("cage_1/bath_1_manual_indicator", " ");
       bath_1_manual_indicator = false;
@@ -923,13 +921,13 @@ while (bath_1_manual_indicator == true) {
 
 while (bath_1_scheduled_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/bath_1_scheduled_indicator", "success");
         delay(1000);
         espclient.publish("cage_1/bath_1_scheduled_indicator", " ");
-        espclient.publish("cage_1/logs/successful", msg1_success.c_str());
+        espclient.publish("cage_1/logs", msg1_success.c_str());
 
         bath_1_scheduled_indicator = false;
     }
@@ -942,7 +940,7 @@ while (bath_1_scheduled_indicator == true) {
       msg1_failed = msg1 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_1/bath_1_scheduled_indicator", "failed");
-      espclient.publish("cage_1/logs/failed", msg1_failed.c_str());
+      espclient.publish("cage_1/logs", msg1_failed.c_str());
       delay(1000);
       espclient.publish("cage_1/bath_1_scheduled_indicator", " ");
       bath_1_scheduled_indicator = false;
@@ -953,13 +951,13 @@ while (bath_1_scheduled_indicator == true) {
 
 while (bath_2_manual_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/bath_2_manual_indicator", "success");
         delay(1000);
         espclient.publish("cage_2/bath_2_manual_indicator", " ");
-        espclient.publish("cage_2/logs/successful", msg2_success.c_str());
+        espclient.publish("cage_2/logs", msg2_success.c_str());
 
         bath_2_manual_indicator = false;
     }
@@ -972,7 +970,7 @@ while (bath_2_manual_indicator == true) {
       msg2_failed = msg2 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_2/bath_2_manual_indicator", "failed");
-      espclient.publish("cage_2/logs/failed", msg2_failed.c_str());
+      espclient.publish("cage_2/logs", msg2_failed.c_str());
       delay(1000);
       espclient.publish("cage_2/bath_2_manual_indicator", " ");
       bath_2_manual_indicator = false;
@@ -983,13 +981,13 @@ while (bath_2_manual_indicator == true) {
 
 while (bath_2_scheduled_indicator == true) {
 
-    delay(100);
+    delay(200);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/bath_2_scheduled_indicator", "success");
         delay(1000);
         espclient.publish("cage_2/bath_2_scheduled_indicator", " ");
-        espclient.publish("cage_2/logs/successful", msg2_success.c_str());
+        espclient.publish("cage_2/logs", msg2_success.c_str());
 
         bath_2_scheduled_indicator = false;
     }
@@ -1002,7 +1000,7 @@ while (bath_2_scheduled_indicator == true) {
       msg2_failed = msg2 + " Failed";
       Serial.println("failed");
       espclient.publish("cage_2/bath_2_scheduled_indicator", "failed");
-      espclient.publish("cage_2/logs/failed", msg2_failed.c_str());
+      espclient.publish("cage_2/logs", msg2_failed.c_str());
       delay(1000);
       espclient.publish("cage_2/bath_2_scheduled_indicator", " ");
       bath_2_scheduled_indicator = false;
