@@ -72,6 +72,9 @@ bool bath_2_scheduled_indicator = false;
 bool feed_1_scheduled_warning = false;
 bool feed_2_scheduled_warning = false;
 
+bool wash_1_sensor_indicator = false;
+bool wash_2_sensor_indicator = false;
+
 String msg1, msg2, msg1_failed, msg2_failed, msg1_success, msg2_success;
 String msg1_detected, msg2_detected;
 String water_tank_msg;
@@ -85,6 +88,12 @@ bool x = true;
 bool y = true;
 bool a = true;
 bool b = true;
+bool m = true;
+bool n = true;
+
+unsigned long thermal_delay;
+unsigned long time_delay;
+unsigned long water_tank_delay;
 
 // feed 1 voids
 void feed_1_on_0p5kg() {
@@ -186,42 +195,42 @@ void callback(String topic, byte * message, unsigned int length) {
   if (topic == "cage_1/feed_1") {
     if ((messageInfo == "ON 0.5 KG") || (messageInfo == "0.5 KG ON")) {
       feed_1_manual_indicator = true;
-      msg1 = "Feed 0.5KG|Manual|" + dateRead + "|" + timeRead;
+      msg1 = "Feed 0.5KG|Manual|" + timeRead + "|" + dateRead;
       msg1_success = msg1 + "|Successful";
       feed_1_on_0p5kg();
       Serial.println("Cage 1 Manual feed 0.5 KG");
     }
     if ((messageInfo == "ON1 0.5 KG") || (messageInfo == "0.5 KG ON1")) {
       feed_1_scheduled_indicator = true;
-      msg1 ="Feed 0.5KG|Scheduled|" + dateRead + "|" + timeRead;
+      msg1 ="Feed 0.5KG|Scheduled|" + timeRead + "|" + dateRead;
       msg1_success = msg1 + "|Successful";
       feed_1_on_0p5kg();
       Serial.println("Cage 1 Scheduled feed 0.5KG");
     }
     if ((messageInfo == "ON 1 KG") || (messageInfo == "1 KG ON")) {
       feed_1_manual_indicator = true;
-      msg1 = "Feed 1KG|Manual|" + dateRead + "|" + timeRead;
+      msg1 = "Feed 1KG|Manual|" + timeRead + "|" + dateRead;
       msg1_success = msg1 + "|Successful";
       feed_1_on_1kg();
       Serial.println("Cage 1 Manual feed 1KG");
     }
     if ((messageInfo == "ON1 1 KG") || (messageInfo == "1 KG ON1")) {
       feed_1_scheduled_indicator = true;
-      msg1 = "Feed 1KG|Scheduled|" + dateRead + "|" + timeRead;
+      msg1 = "Feed 1KG|Scheduled|" + timeRead + "|" + dateRead;
       msg1_success = msg1 + "|Successful";
       feed_1_on_1kg();
       Serial.println("Cage 1 Scheduled feed 1KG");
     }
     if ((messageInfo == "ON 1.5 KG") || (messageInfo == "1.5 KG ON")) {
       feed_1_manual_indicator = true;
-      msg1 = "Feed 1.5KG|Manual|" + dateRead + "|" + timeRead;
+      msg1 = "Feed 1.5KG|Manual|" + timeRead + "|" + dateRead;
       msg1_success = msg1 + "|Successful";
       feed_1_on_1p5kg();
       Serial.println("Cage 1 Manual feed 1.5KG");
     }
     if ((messageInfo == "ON1 1.5 KG") || (messageInfo == "1.5 KG ON1")) {
       feed_1_scheduled_indicator = true;
-      msg1 = "Feed 1.5KG|Scheduled|" + dateRead + "|" + timeRead;
+      msg1 = "Feed 1.5KG|Scheduled|" + timeRead + "|" + dateRead;
       msg1_success = msg1 + "|Successful";
       feed_1_on_1p5kg();
       Serial.println("Cage 1 Scheduled feed 1.5KG");
@@ -232,42 +241,42 @@ void callback(String topic, byte * message, unsigned int length) {
   if (topic == "cage_2/feed_2") {
     if ((messageInfo == "ON 0.5 KG") || (messageInfo == "0.5 KG ON")) {
       feed_2_manual_indicator = true;
-      msg2 = "Feed 0.5KG|Manual|" + dateRead + "|" + timeRead;
+      msg2 = "Feed 0.5KG|Manual|" + timeRead + "|" + dateRead;
       msg2_success = msg2 + "|Successful";
       feed_2_on_0p5kg();
       Serial.println("Cage 2 Manual feed 0.5 KG");
     }
     if ((messageInfo == "ON1 0.5 KG") || (messageInfo == "0.5 KG ON1")) {
       feed_2_scheduled_indicator = true;
-      msg2 = "Feed 0.5KG|Scheduled|" + dateRead + "|" + timeRead;
+      msg2 = "Feed 0.5KG|Scheduled|" + timeRead + "|" + dateRead;
       msg2_success = msg2 + "|Successful";
       feed_2_on_0p5kg();
       Serial.println("Cage 2 Scheduled feed 0.5KG");
     }
     if ((messageInfo == "ON 1 KG") || (messageInfo == "1 KG ON")) {
       feed_2_manual_indicator = true;
-      msg2 = "Feed 1KG|Manual|" + dateRead + "|" + timeRead;
+      msg2 = "Feed 1KG|Manual|" + timeRead + "|" + dateRead;
       msg2_success = msg2 + "|Successful";
       feed_2_on_1kg();
       Serial.println("Cage 2 Manual feed 1KG");
     }
     if ((messageInfo == "ON1 1 KG") || (messageInfo == "1 KG ON1")) {
       feed_2_scheduled_indicator = true;
-      msg2 = "Feed 1KG|Scheduled|" + dateRead + "|" + timeRead;
+      msg2 = "Feed 1KG|Scheduled|" + timeRead + "|" + dateRead;
       msg2_success = msg2 + "|Successful";
       feed_2_on_1kg();
       Serial.println("Cage 2 Scheduled feed 1KG");
     }
     if ((messageInfo == "ON 1.5 KG") || (messageInfo == "1.5 KG ON")) {
       feed_2_manual_indicator = true;
-      msg2 = "Feed 1.5KG|Manual|" + dateRead + "|" + timeRead;
+      msg2 = "Feed 1.5KG|Manual|" + timeRead + "|" + dateRead;
       msg2_success = msg2 + "|Successful";
       feed_2_on_1p5kg();
       Serial.println("Cage 2 Manual feed 1.5KG");
     }
     if ((messageInfo == "ON1 1.5 KG") || (messageInfo == "1.5 KG ON1")) {
       feed_2_scheduled_indicator = true;
-      msg2 = "Feed 1.5KG|Scheduled|" + dateRead + "|" + timeRead;
+      msg2 = "Feed 1.5KG|Scheduled|" + timeRead + "|" + dateRead;
       msg2_success = msg2 + "|Successful";
       feed_2_on_1p5kg();
       Serial.println("Cage 2 Scheduled feed 1.5KG");
@@ -279,7 +288,7 @@ void callback(String topic, byte * message, unsigned int length) {
   if (topic == "cage_1/wash_1") {
     if (messageInfo == "ON") {
       wash_1_manual_indicator = true;
-      msg1 = "Wash|Manual|" + dateRead + "|" + timeRead;
+      msg1 = "Wash|Manual|" + timeRead + "|" + dateRead;
       msg1_success = msg1 + "|Successful";
       wash_1();
       Serial.println("Wash 1");
@@ -287,7 +296,15 @@ void callback(String topic, byte * message, unsigned int length) {
 
     if (messageInfo == "ON1") {
       wash_1_scheduled_indicator = true;
-      msg1 = "Wash|Scheduled|" + dateRead + "|" + timeRead;
+      msg1 = "Wash|Scheduled|" + timeRead + "|" + dateRead;
+      msg1_success = msg1 + "|Successful";
+      wash_1();
+      Serial.println("Wash 1");
+    }
+
+    if (messageInfo == "ON2") {
+      wash_1_sensor_indicator = true;
+      msg1 = "Wash|Detected|" + timeRead + "|" + dateRead;
       msg1_success = msg1 + "|Successful";
       wash_1();
       Serial.println("Wash 1");
@@ -297,7 +314,7 @@ void callback(String topic, byte * message, unsigned int length) {
   if (topic == "cage_2/wash_2") {
     if (messageInfo == "ON") {
       wash_2_manual_indicator = true;
-      msg2 = "Wash|Manual|" + dateRead + "|" + timeRead;
+      msg2 = "Wash|Manual|" + timeRead + "|" + dateRead;
       msg2_success = msg2 + "|Successful";
       wash_2();
       Serial.println("Wash 2");
@@ -305,7 +322,15 @@ void callback(String topic, byte * message, unsigned int length) {
 
     if (messageInfo == "ON1") {
       wash_2_scheduled_indicator = true;
-      msg2 = "Wash|Scheduled|" + dateRead + "|" + timeRead;
+      msg2 = "Wash|Scheduled|" + timeRead + "|" + dateRead;
+      msg2_success = msg2 + "|Successful";
+      wash_2();
+      Serial.println("Wash 2");
+    }
+
+    if (messageInfo == "ON2") {
+      wash_2_sensor_indicator = true;
+      msg2 = "Wash|Detected|" + timeRead + "|" + dateRead;
       msg2_success = msg2 + "|Successful";
       wash_2();
       Serial.println("Wash 2");
@@ -317,7 +342,7 @@ void callback(String topic, byte * message, unsigned int length) {
   if (topic == "cage_1/bath_1") {
     if (messageInfo == "ON") {
       bath_1_manual_indicator = true;
-      msg1 = "Bath|Manual|" + dateRead + "|" + timeRead;
+      msg1 = "Bath|Manual|" + timeRead + "|" + dateRead;
       msg1_success = msg1 + "|Successful";
       bath_1();
       Serial.println("Bath 1");
@@ -325,7 +350,7 @@ void callback(String topic, byte * message, unsigned int length) {
 
     if (messageInfo == "ON1") {
       bath_1_scheduled_indicator = true;
-      msg1 = "Bath|Scheduled|" + dateRead + "|" + timeRead;
+      msg1 = "Bath|Scheduled|" + timeRead + "|" + dateRead;
       msg1_success = msg1 + "|Successful";
       bath_1();
       Serial.println("Bath 1");
@@ -335,7 +360,7 @@ void callback(String topic, byte * message, unsigned int length) {
   if (topic == "cage_2/bath_2") {
     if (messageInfo == "ON") {
       bath_2_manual_indicator = true;
-      msg2 = "Bath|Manual|" + dateRead + "|" + timeRead;
+      msg2 = "Bath|Manual|" + timeRead + "|" + dateRead;
       msg2_success = msg2 + "|Successful";
       bath_2();
       Serial.println("Bath 2");
@@ -343,7 +368,7 @@ void callback(String topic, byte * message, unsigned int length) {
 
     if (messageInfo == "ON1") {
       bath_2_scheduled_indicator = true;
-      msg2 = "Bath|Scheduled|" + dateRead + "|" + timeRead;
+      msg2 = "Bath|Scheduled|" + timeRead + "|" + dateRead;
       msg2_success = msg2 + "|Successful";
       bath_2();
       Serial.println("Bath 2");
@@ -354,80 +379,98 @@ void callback(String topic, byte * message, unsigned int length) {
 
   if (topic == "cage1_feed_sched/0") {
     feed1_0 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage1_feed_sched/1") {
     feed1_1 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage1_feed_sched/2") {
     feed1_2 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   //CAGE 2 sched
 
   if (topic == "cage2_feed_sched/0") {
     feed2_0 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage2_feed_sched/1") {
     feed2_1 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage2_feed_sched/2") {
     feed2_2 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   //cage 1 wash sched
   if (topic == "cage1_wash_sched/0") {
     wash1_0 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage1_wash_sched/1") {
     wash1_1 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage1_wash_sched/2") {
     wash1_2 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   // Cage 2 wash sched
   if (topic == "cage2_wash_sched/0") {
     wash2_0 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage2_wash_sched/1") {
     wash2_1 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage2_wash_sched/2") {
     wash2_2 = messageInfo;
+    Serial.println(messageInfo);
   }
 
    //cage 1 bath sched
   if (topic == "cage1_bath_sched/0") {
     bath1_0 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage1_bath_sched/1") {
     bath1_1 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage1_bath_sched/2") {
     bath1_2 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   // Cage 2 bath sched
   if (topic == "cage2_bath_sched/0") {
     bath2_0 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage2_bath_sched/1") {
     bath2_1 = messageInfo;
+    Serial.println(messageInfo);
   }
 
   if (topic == "cage2_bath_sched/2") {
     bath2_2 = messageInfo;
+    Serial.println(messageInfo);
   }
   //Serial.println();
 }
@@ -447,11 +490,13 @@ void reconnect() {
       espclient.subscribe("cage_1/feed_1/switch");
       espclient.subscribe("cage_1/weight_1");
       espclient.subscribe("cage_1/logs");
+      espclient.subscribe("cage_1/wash_1/switch");
 
       espclient.subscribe("cage_2/feed_2");
       espclient.subscribe("cage_2/feed_2/switch");
       espclient.subscribe("cage_2/weight_2");
       espclient.subscribe("cage_2/logs");
+      espclient.subscribe("cage_2/wash_2/switch");
 
       espclient.subscribe("water_tank");
       espclient.subscribe("feed_tank_1");
@@ -467,9 +512,6 @@ void reconnect() {
 
       espclient.subscribe("cage_1/wash_1");
       espclient.subscribe("cage_2/wash_2");
-
-      espclient.subscribe("cage_1/wash_1/switch");
-      espclient.subscribe("cage_2/wash_2/switch");
 
       espclient.subscribe("cage1_wash_sched/0");
       espclient.subscribe("cage1_wash_sched/1");
@@ -563,20 +605,35 @@ void loop() {
   //mySerial2_rd = mySerial2.read(); 
   //Serial_rd = Serial.read();
 
+  while (m == true){
+  delay(50);
   if (mySerial2.read() == 'x') {
+    m = false;
+    if (m == false){
     ultrasonicRead = mySerial2.readStringUntil('\r');
     ultrasonicInt = ultrasonicRead.toInt();
     Serial.println();
     Serial.print("Water Tank : ");
     Serial.print(ultrasonicInt);
     espclient.publish("water_tank", String(ultrasonicInt).c_str());
+    n = true;
+    }
+  }
   }
 
-  if (mySerial2.read() == 't') {
+  while (n == true){
+  delay(50);
+  if (mySerial2.read() == 't' && time_delay < millis()) {
+    time_delay = millis() + 200;
+    n = false;
+    if (n == false) {
     timeRead = mySerial2.readStringUntil('\n');
     Serial.println();
     Serial.print("time: ");
     Serial.print(timeRead);
+    m = true;
+    }
+  }
   }
 
   if (mySerial2.read() == 'd') {
@@ -635,7 +692,8 @@ void loop() {
     }
   }
 
-  if (mySerial.read() == 'k') {
+  if ((mySerial.read() == 'k') && (thermal_delay < millis())) {
+    thermal_delay = millis() + 2000;
     Serial.println("Cage 1 thermal detected");
     espclient.publish("cage_1/wash_1_sensor_indicator", "success");
     delay(1000);
@@ -687,7 +745,7 @@ while (feed_1_manual_indicator == true) {
 
 while (feed_1_scheduled_indicator == true) {
 
-    delay(200);
+    delay(500);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/feed_1_scheduled_indicator", "success");
@@ -745,7 +803,7 @@ while (feed_2_manual_indicator == true) {
 
 while (feed_2_scheduled_indicator == true) {
 
-    delay(200);
+    delay(500);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/feed_2_scheduled_indicator", "success");
@@ -803,7 +861,7 @@ while (wash_1_manual_indicator == true) {
 
 while (wash_1_scheduled_indicator == true) {
 
-    delay(200);
+    delay(500);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/wash_1_scheduled_indicator", "success");
@@ -825,6 +883,36 @@ while (wash_1_scheduled_indicator == true) {
       delay(1000);
       espclient.publish("cage_1/wash_1_scheduled_indicator", " ");
       wash_1_scheduled_indicator = false;
+      }
+      }
+    }
+}
+
+
+while (wash_1_sensor_indicator == true) {
+
+    delay(200);
+    if (mySerial.read() == 's') {
+      Serial.println("success");
+        espclient.publish("cage_1/wash_1_sensor_indicator", "success");
+        delay(1000);
+        espclient.publish("cage_1/wash_1_sensor_indicator", " ");
+        espclient.publish("cage_1/logs", msg1_success.c_str());
+        wash_1_sensor_indicator = false;
+    }
+
+
+    else {
+      if (millis() >= failed_delay + 3000) {
+  failed_delay += 3000;
+      while (wash_1_sensor_indicator == true) {
+      msg1_failed = msg1 + " Failed";
+      Serial.println("failed");
+      espclient.publish("cage_1/wash_1_sensor_indicator", "failed");
+      espclient.publish("cage_1/logs", msg1_failed.c_str());
+      delay(1000);
+      espclient.publish("cage_1/wash_1_sensor_indicator", " ");
+      wash_1_sensor_indicator = false;
       }
       }
     }
@@ -861,7 +949,7 @@ while (wash_2_manual_indicator == true) {
 
 while (wash_2_scheduled_indicator == true) {
 
-    delay(200);
+    delay(500);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/wash_2_scheduled_indicator", "success");
@@ -884,6 +972,36 @@ while (wash_2_scheduled_indicator == true) {
       delay(1000);
       espclient.publish("cage_2/wash_2_scheduled_indicator", " ");
       wash_2_scheduled_indicator = false;
+      }
+      }
+    }
+}
+
+while (wash_2_sensor_indicator == true) {
+
+    delay(200);
+    if (Serial.read() == 'S') {
+      Serial.println("success");
+        espclient.publish("cage_2/wash_2_sensor_indicator", "success");
+        delay(1000);
+        espclient.publish("cage_2/wash_2_sensor_indicator", " ");
+        espclient.publish("cage_2/logs", msg2_success.c_str());
+
+        wash_2_sensor_indicator = false;
+    }
+
+
+    else {
+      if (millis() >= failed_delay + 3000) {
+  failed_delay += 3000;
+      while (wash_2_sensor_indicator == true) {
+      msg2_failed = msg2 + " Failed";
+      Serial.println("failed");
+      espclient.publish("cage_2/wash_2_sensor_indicator", "failed");
+      espclient.publish("cage_2/logs", msg2_failed.c_str());
+      delay(1000);
+      espclient.publish("cage_2/wash_2_sensor_indicator", " ");
+      wash_2_sensor_indicator = false;
       }
       }
     }
@@ -921,7 +1039,7 @@ while (bath_1_manual_indicator == true) {
 
 while (bath_1_scheduled_indicator == true) {
 
-    delay(200);
+    delay(500);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/bath_1_scheduled_indicator", "success");
@@ -981,7 +1099,7 @@ while (bath_2_manual_indicator == true) {
 
 while (bath_2_scheduled_indicator == true) {
 
-    delay(200);
+    delay(500);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/bath_2_scheduled_indicator", "success");
