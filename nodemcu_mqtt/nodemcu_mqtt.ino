@@ -4,7 +4,7 @@
 
 #include <SoftwareSerial.h>
 
-#define WIFI_SSID "DE LA VICTORIA NETWORK-2.4GHZ"
+#define WIFI_SSID "Bahay Kubo - 2.4GHz"
 #define WIFI_PASSWORD "Isuzutrooper_grv208"
 
 SoftwareSerial mySerial(D6, D5); //RX, TX pins
@@ -91,7 +91,8 @@ bool b = true;
 bool m = true;
 bool n = true;
 
-unsigned long thermal_delay;
+unsigned long thermal1_delay;
+unsigned long thermal2_delay;
 unsigned long time_delay;
 unsigned long water_tank_delay;
 
@@ -605,35 +606,21 @@ void loop() {
   //mySerial2_rd = mySerial2.read(); 
   //Serial_rd = Serial.read();
 
-  while (m == true){
-  delay(50);
   if (mySerial2.read() == 'x') {
-    m = false;
-    if (m == false){
     ultrasonicRead = mySerial2.readStringUntil('\r');
     ultrasonicInt = ultrasonicRead.toInt();
     Serial.println();
     Serial.print("Water Tank : ");
     Serial.print(ultrasonicInt);
     espclient.publish("water_tank", String(ultrasonicInt).c_str());
-    n = true;
-    }
-  }
   }
 
-  while (n == true){
-  delay(50);
   if (mySerial2.read() == 't' && time_delay < millis()) {
-    time_delay = millis() + 200;
-    n = false;
-    if (n == false) {
+    time_delay = millis() + 5000;
     timeRead = mySerial2.readStringUntil('\n');
     Serial.println();
     Serial.print("time: ");
     Serial.print(timeRead);
-    m = true;
-    }
-  }
   }
 
   if (mySerial2.read() == 'd') {
@@ -692,23 +679,28 @@ void loop() {
     }
   }
 
-  if ((mySerial.read() == 'k') && (thermal_delay < millis())) {
-    thermal_delay = millis() + 2000;
+  if (mySerial.read() == 'k') {
     Serial.println("Cage 1 thermal detected");
+  if (thermal1_delay < millis()) {
+    thermal1_delay = millis() + 2000;
     espclient.publish("cage_1/wash_1_sensor_indicator", "success");
     delay(1000);
     espclient.publish("cage_1/wash_1_sensor_indicator", " ");
     msg1_detected = "Wash|Detected|" + timeRead + "|" + dateRead + "|Successful";
     espclient.publish("cage_1/logs", msg1_detected.c_str());
   }
+  }
 
   if (Serial.read() == 'K') {
     Serial.println("Cage 2 thermal detected");
+  if (thermal2_delay < millis()) {
+    thermal2_delay = millis() + 2000;
     espclient.publish("cage_2/wash_2_sensor_indicator", "success");
     delay(1000);
     espclient.publish("cage_2/wash_2_sensor_indicator", " ");
     msg2_detected = "Wash|Detected|" + timeRead + "|" + dateRead + "|Successful";
     espclient.publish("cage_2/logs", msg2_detected.c_str());
+  }
   }
 
 
