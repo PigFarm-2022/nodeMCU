@@ -623,6 +623,7 @@ void loop() {
     Serial.print(timeRead);
   }
 
+  dateRead = "05-05-22";
   if (mySerial2.read() == 'd') {
     dateRead = mySerial2.readStringUntil('\n');
     Serial.println();
@@ -630,7 +631,7 @@ void loop() {
     Serial.print(dateRead);
   }
 
-  if ((ultrasonicInt <=50) && (x == true)) {
+  if ((ultrasonicInt <=50 || ultrasonicInt == 0) && (x == true)) {
     x = false;
     if (x == false) {
     water_tank_msg = "Below 50%|Refilling|" + timeRead + "|" + dateRead;  
@@ -660,7 +661,7 @@ void loop() {
     Serial.print("Feed Tank 2: ");
     Serial.print(ultrasonicIntZ);
     espclient.publish("feed_tank_2", String(ultrasonicIntZ).c_str());
-    if (ultrasonicIntZ <= 15) {
+    if (ultrasonicIntZ <= 20) {
       mySerial.write('z');
       mySerial.write("ooooooooo");
     }
@@ -673,7 +674,7 @@ void loop() {
     Serial.print("Feed Tank 1: ");
     Serial.print(ultrasonicIntY);
     espclient.publish("feed_tank_1", String(ultrasonicIntY).c_str());
-    if (ultrasonicIntY <= 15) {
+    if (ultrasonicIntY <= 20) {
       mySerial.write('y');
       mySerial.write("ooooooooo");
     }
@@ -707,7 +708,7 @@ void loop() {
 
 while (feed_1_manual_indicator == true) {
 
-    delay(200);
+    delay(300);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/feed_1_manual_indicator", "success");
@@ -723,7 +724,7 @@ while (feed_1_manual_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (feed_1_manual_indicator == true) {
-      msg1_failed = msg1 + " Failed";
+      msg1_failed = msg1 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_1/feed_1_manual_indicator", "failed");
       espclient.publish("cage_1/logs", msg1_failed.c_str());
@@ -752,7 +753,7 @@ while (feed_1_scheduled_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (feed_1_scheduled_indicator == true) {
-      msg1_failed = msg1 + " Failed";
+      msg1_failed = msg1 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_1/feed_1_scheduled_indicator", "failed");
       espclient.publish("cage_1/logs", msg1_failed.c_str());
@@ -766,7 +767,7 @@ while (feed_1_scheduled_indicator == true) {
 
 while (feed_2_manual_indicator == true) {
 
-    delay(200);
+    delay(300);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/feed_2_manual_indicator", "success");
@@ -781,7 +782,7 @@ while (feed_2_manual_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (feed_2_manual_indicator == true) {
-      msg2_failed = msg2 + " Failed";
+      msg2_failed = msg2 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_2/feed_2_manual_indicator", "failed");
       espclient.publish("cage_2/logs", msg2_failed.c_str());
@@ -810,7 +811,7 @@ while (feed_2_scheduled_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (feed_2_scheduled_indicator == true) {
-      msg2_failed = msg2 + " Failed";
+      msg2_failed = msg2 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_2/feed_2_scheduled_indicator", "failed");
       espclient.publish("cage_2/logs", msg2_failed.c_str());
@@ -824,7 +825,7 @@ while (feed_2_scheduled_indicator == true) {
 
 while (wash_1_manual_indicator == true) {
 
-    delay(200);
+    delay(300);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/wash_1_manual_indicator", "success");
@@ -839,7 +840,7 @@ while (wash_1_manual_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (wash_1_manual_indicator == true) {
-      msg1_failed = msg1 + " Failed";
+      msg1_failed = msg1 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_1/wash_1_manual_indicator", "failed");
       espclient.publish("cage_1/logs", msg1_failed.c_str());
@@ -868,7 +869,7 @@ while (wash_1_scheduled_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (wash_1_scheduled_indicator == true) {
-      msg1_failed = msg1 + " Failed";
+      msg1_failed = msg1 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_1/wash_1_scheduled_indicator", "failed");
       espclient.publish("cage_1/logs", msg1_failed.c_str());
@@ -883,7 +884,7 @@ while (wash_1_scheduled_indicator == true) {
 
 while (wash_1_sensor_indicator == true) {
 
-    delay(200);
+    delay(300);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/wash_1_sensor_indicator", "success");
@@ -898,7 +899,7 @@ while (wash_1_sensor_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (wash_1_sensor_indicator == true) {
-      msg1_failed = msg1 + " Failed";
+      msg1_failed = msg1 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_1/wash_1_sensor_indicator", "failed");
       espclient.publish("cage_1/logs", msg1_failed.c_str());
@@ -912,7 +913,7 @@ while (wash_1_sensor_indicator == true) {
 
 while (wash_2_manual_indicator == true) {
 
-    delay(200);
+    delay(300);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/wash_2_manual_indicator", "success");
@@ -927,7 +928,7 @@ while (wash_2_manual_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (wash_2_manual_indicator == true) {
-      msg2_failed = msg2 + " Failed";
+      msg2_failed = msg2 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_2/wash_2_manual_indicator", "failed");
       espclient.publish("cage_2/logs", msg2_failed.c_str());
@@ -957,7 +958,7 @@ while (wash_2_scheduled_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (wash_2_scheduled_indicator == true) {
-      msg2_failed = msg2 + " Failed";
+      msg2_failed = msg2 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_2/wash_2_scheduled_indicator", "failed");
       espclient.publish("cage_2/logs", msg2_failed.c_str());
@@ -971,7 +972,7 @@ while (wash_2_scheduled_indicator == true) {
 
 while (wash_2_sensor_indicator == true) {
 
-    delay(200);
+    delay(300);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/wash_2_sensor_indicator", "success");
@@ -987,7 +988,7 @@ while (wash_2_sensor_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (wash_2_sensor_indicator == true) {
-      msg2_failed = msg2 + " Failed";
+      msg2_failed = msg2 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_2/wash_2_sensor_indicator", "failed");
       espclient.publish("cage_2/logs", msg2_failed.c_str());
@@ -1001,7 +1002,7 @@ while (wash_2_sensor_indicator == true) {
 
 while (bath_1_manual_indicator == true) {
 
-    delay(200);
+    delay(300);
     if (mySerial.read() == 's') {
       Serial.println("success");
         espclient.publish("cage_1/bath_1_manual_indicator", "success");
@@ -1017,7 +1018,7 @@ while (bath_1_manual_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (bath_1_manual_indicator == true) {
-      msg1_failed = msg1 + " Failed";
+      msg1_failed = msg1 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_1/bath_1_manual_indicator", "failed");
       espclient.publish("cage_1/logs", msg1_failed.c_str());
@@ -1047,7 +1048,7 @@ while (bath_1_scheduled_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (bath_1_scheduled_indicator == true) {
-      msg1_failed = msg1 + " Failed";
+      msg1_failed = msg1 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_1/bath_1_scheduled_indicator", "failed");
       espclient.publish("cage_1/logs", msg1_failed.c_str());
@@ -1061,7 +1062,7 @@ while (bath_1_scheduled_indicator == true) {
 
 while (bath_2_manual_indicator == true) {
 
-    delay(200);
+    delay(300);
     if (Serial.read() == 'S') {
       Serial.println("success");
         espclient.publish("cage_2/bath_2_manual_indicator", "success");
@@ -1077,7 +1078,7 @@ while (bath_2_manual_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (bath_2_manual_indicator == true) {
-      msg2_failed = msg2 + " Failed";
+      msg2_failed = msg2 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_2/bath_2_manual_indicator", "failed");
       espclient.publish("cage_2/logs", msg2_failed.c_str());
@@ -1107,7 +1108,7 @@ while (bath_2_scheduled_indicator == true) {
       if (millis() >= failed_delay + 3000) {
   failed_delay += 3000;
       while (bath_2_scheduled_indicator == true) {
-      msg2_failed = msg2 + " Failed";
+      msg2_failed = msg2 + "|Failed";
       Serial.println("failed");
       espclient.publish("cage_2/bath_2_scheduled_indicator", "failed");
       espclient.publish("cage_2/logs", msg2_failed.c_str());
@@ -1120,7 +1121,7 @@ while (bath_2_scheduled_indicator == true) {
 }
 
 
-if (ultrasonicIntY > 15) {
+if (ultrasonicIntY > 20) {
   if ((timeRead == feed1_0) || (timeRead == feed1_1) || (timeRead == feed1_2)) {
     Serial.println("feed 1 scheduled successful!");
     espclient.publish("cage_1/feed_1/switch", "ON1");
@@ -1136,7 +1137,7 @@ if (ultrasonicIntY > 15) {
   }
 }
 
-if (ultrasonicIntY <= 15) {
+if (ultrasonicIntY <= 20) {
   if ((timeRead == feed1_0) || (timeRead == feed1_1) || (timeRead == feed1_2)) {
      //msg1 = "Feed " + weight_1_msg_info + " Scheduled" + dateRead + " " + timeRead;
      feed_1_scheduled_indicator = true;
@@ -1153,7 +1154,7 @@ if (ultrasonicIntY <= 15) {
   }
 }
 
-if (ultrasonicIntZ > 15) {
+if (ultrasonicIntZ > 20) {
   if ((timeRead == feed2_0) || (timeRead == feed2_1) || (timeRead == feed2_2)) {
     Serial.println("feed 2 scheduled successful!");
     espclient.publish("cage_2/feed_2/switch", "ON1");
@@ -1169,7 +1170,7 @@ if (ultrasonicIntZ > 15) {
   }
 }
 
-if (ultrasonicIntZ <= 15) {
+if (ultrasonicIntZ <= 20) {
   if ((timeRead == feed2_0) || (timeRead == feed2_1) || (timeRead == feed2_2)) {
      //msg2 = "Feed " + weight_2_msg_info + " Scheduled" + dateRead + " " + timeRead;
      feed_2_scheduled_indicator = true;
